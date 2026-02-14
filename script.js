@@ -1,3 +1,140 @@
+// PIN Gate functionality
+(function() {
+    const CORRECT_PIN = 'nuts1234';
+    const PIN_STORAGE_KEY = 'rz_math_pin_unlocked';
+    
+    function checkPinStatus() {
+        return localStorage.getItem(PIN_STORAGE_KEY) === 'true';
+    }
+    
+    function createPinGate() {
+        const overlay = document.createElement('div');
+        overlay.id = 'pinGateOverlay';
+        overlay.style.cssText = `
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+        `;
+        
+        const gateBox = document.createElement('div');
+        gateBox.style.cssText = `
+            background: #1a1a2e;
+            border: 2px solid #d4af37;
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.7), 0 0 30px rgba(212, 175, 55, 0.3);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        `;
+        
+        const title = document.createElement('h2');
+        title.textContent = 'Enter your PIN to continue';
+        title.style.cssText = `
+            color: #d4af37;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 1.5rem 0;
+        `;
+        
+        const input = document.createElement('input');
+        input.type = 'password';
+        input.id = 'pinInput';
+        input.placeholder = 'Enter PIN';
+        input.style.cssText = `
+            width: 100%;
+            padding: 0.875rem 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #2a2a3e;
+            border-radius: 12px;
+            background: #0a0a0a;
+            color: #f1f5f9;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+        `;
+        
+        const errorMsg = document.createElement('div');
+        errorMsg.id = 'pinError';
+        errorMsg.style.cssText = `
+            color: #ff4d75;
+            font-size: 14px;
+            margin-bottom: 1rem;
+            min-height: 20px;
+        `;
+        
+        const submitBtn = document.createElement('button');
+        submitBtn.textContent = 'Submit';
+        submitBtn.style.cssText = `
+            width: 100%;
+            padding: 0.875rem 1.5rem;
+            background: linear-gradient(135deg, #d4af37 0%, #f0c14b 100%);
+            color: #0a0a0a;
+            border: 0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        `;
+        
+        submitBtn.onmouseover = () => {
+            submitBtn.style.transform = 'translateY(-2px)';
+            submitBtn.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.6)';
+        };
+        
+        submitBtn.onmouseout = () => {
+            submitBtn.style.transform = 'translateY(0)';
+            submitBtn.style.boxShadow = 'none';
+        };
+        
+        function validatePin() {
+            const enteredPin = input.value;
+            if (enteredPin === CORRECT_PIN) {
+                localStorage.setItem(PIN_STORAGE_KEY, 'true');
+                overlay.remove();
+            } else {
+                errorMsg.textContent = 'Incorrect PIN. Please try again.';
+                input.value = '';
+                input.style.borderColor = '#ff4d75';
+                setTimeout(() => {
+                    input.style.borderColor = '#2a2a3e';
+                }, 2000);
+            }
+        }
+        
+        submitBtn.onclick = validatePin;
+        input.onkeypress = (e) => {
+            if (e.key === 'Enter') {
+                validatePin();
+            }
+        };
+        
+        gateBox.appendChild(title);
+        gateBox.appendChild(input);
+        gateBox.appendChild(errorMsg);
+        gateBox.appendChild(submitBtn);
+        overlay.appendChild(gateBox);
+        document.body.appendChild(overlay);
+        
+        setTimeout(() => input.focus(), 100);
+    }
+    
+    if (!checkPinStatus()) {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', createPinGate);
+        } else {
+            createPinGate();
+        }
+    }
+})();
+
 const container = document.getElementById('container');
 const zoneViewer = document.getElementById('zoneViewer');
 let zoneFrame = document.getElementById('zoneFrame');
@@ -644,8 +781,7 @@ function showContact() {
     document.getElementById('popupTitle').textContent = "Contact";
     const popupBody = document.getElementById('popupBody');
     popupBody.innerHTML = `
-    <p>Discord: https://discord.gg/NAFw4ykZ7n</p>
-    <p>Email: gn.math.business@gmail.com</p>`;
+    <p>Email: blue@gace.space</p>`;
     popupBody.contentEditable = false;
     document.getElementById('popupOverlay').style.display = "flex";
 }
@@ -657,12 +793,12 @@ function loadPrivacy() {
         <div style="max-height: 60vh; overflow-y: auto;">
             <h2>PRIVACY POLICY</h2>
             <p>Last updated April 17, 2025</p>
-            <p>This Privacy Notice for gn-math ("we," "us," or "our"), describes how and why we might access, collect, store, use, and/or share ("process") your personal information when you use our services ("Services"), including when you:</p>
+            <p>This Privacy Notice for rz-math ("we," "us," or "our"), describes how and why we might access, collect, store, use, and/or share ("process") your personal information when you use our services ("Services"), including when you:</p>
             <ul>
                 <li>Visit our website at <a href="https://gn-math.github.io">https://gn-math.github.io</a>, or any website of ours that links to this Privacy Notice</li>
                 <li>Engage with us in other related ways, including any sales, marketing, or events</li>
             </ul>
-            <p>Questions or concerns? Reading this Privacy Notice will help you understand your privacy rights and choices. We are responsible for making decisions about how your personal information is processed. If you do not agree with our policies and practices, please do not use our Services. If you still have any questions or concerns, please contact us at <a href="https://discord.gg/NAFw4ykZ7n">https://discord.gg/NAFw4ykZ7n</a>.</p>
+            <p>Questions or concerns? Reading this Privacy Notice will help you understand your privacy rights and choices. We are responsible for making decisions about how your personal information is processed. If you do not agree with our policies and practices, please do not use our Services. If you still have any questions or concerns, please contact us at <a href="mailto:blue@gace.space">blue@gace.space</a>.</p>
             
             <h3>SUMMARY OF KEY POINTS</h3>
             <p>This summary provides key points from our Privacy Notice, but you can find out more details about any of these topics by clicking the link following each key point or by using our table of contents below to find the section you are looking for.</p>
@@ -694,25 +830,16 @@ function loadDMCA() {
     popupBody.innerHTML = `
         <div class="dmca-content">
             <p>
-                If you own or developed a game that is on <strong>gn-math</strong> 
-                and would like it removed, please do one of the following:
+                If you own or developed a game that is on <strong>rz-math</strong> 
+                and would like it removed, please email us:
             </p>
-            <ol>
-                <li>
-                    <a href="https://discord.gg/D4c9VFYWyU" target="_blank" rel="noopener noreferrer">
-                        Join the Discord
-                    </a> and DM <strong>breadbb</strong> or ping me in a public channel 
-                    <strong>[INSTANT RESPONSE]</strong>
-                </li>
-                <li>
-                    Email me at 
-                    <a href="mailto:gn.math.business@gmail.com">gn.math.business@gmail.com</a> 
-                    with the subject starting with <code>!DMCA</code>.
-                    <strong>[DELAYED RESPONSE]</strong>
-                </li>
-            </ol>
             <p>
-                If you are going to do an email, please show proof you own the game before I have to ask.
+                Email: 
+                <a href="mailto:blue@gace.space">blue@gace.space</a> 
+                with the subject starting with <code>!DMCA</code>.
+            </p>
+            <p>
+                Please include proof of ownership in your initial email.
             </p>
         </div>
     `;
